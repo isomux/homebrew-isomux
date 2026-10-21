@@ -61,6 +61,7 @@ class Isomux < Formula
         watchdog=$!
         wait "$pid" && login_path="$(cat "$out")"
         kill "$watchdog" 2>/dev/null
+        wait "$watchdog" 2>/dev/null
         rm -f "$out"
       fi
       case "$login_path" in
