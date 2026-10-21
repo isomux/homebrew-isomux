@@ -1,0 +1,35 @@
+---
+name: Test the formula
+
+# Installs the committed formula from source on Apple silicon and Intel Macs
+# and boots the office as a brew service.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      check_status:
+        description: "Check the reported version and update guide (0 for a release from before Homebrew support)"
+        default: "1"
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - macos-latest
+          - macos-15-intel
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Install and boot
+        env:
+          CHECK_STATUS: ${{ inputs.check_status || '1' }}
+        run: .github/scripts/check-install.sh

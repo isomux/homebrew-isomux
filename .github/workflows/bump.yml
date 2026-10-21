@@ -1,0 +1,88 @@
+---
+name: Bump to the latest release
+
+# Every hour: when nmamano/isomux has a newer release, point the formula at
+# it, install and boot it on Apple silicon and Intel Macs, and commit to main
+# only when both pass. A failed run leaves the formula on the last good
+# release; it shows as a failed run in this repo's Actions tab. A commit made
+# with GITHUB_TOKEN starts no workflow, so the bump cannot trigger itself.
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag (default: the latest release)"
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bump
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.bump.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - id: bump
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          tag=$(python3 -I .github/scripts/bump.py ${TAG:+"$TAG"})
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - if: steps.bump.outputs.tag != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: formula
+          path: Formula/isomux.rb
+
+  install:
+    needs: plan
+    if: needs.plan.outputs.tag != ''
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - macos-latest
+          - macos-15-intel
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: formula
+          path: Formula
+      # brew taps a commit, so commit the new formula locally (not pushed).
+      - run: |
+          git -c user.name=ci -c user.email=ci@localhost commit -qam "Test ${{ needs.plan.outputs.tag }}"
+          .github/scripts/check-install.sh
+
+  publish:
+    needs: [plan, install]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: formula
+          path: Formula
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -qam "isomux ${{ needs.plan.outputs.tag }}"
+          git push origin HEAD:main
