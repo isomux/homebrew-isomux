@@ -15,6 +15,11 @@ import urllib.request
 REPO = "nmamano/isomux"
 FORMULA = os.path.join(os.path.dirname(__file__), "..", "..", "Formula", "isomux.rb")
 TAG_RE = re.compile(r"^v\d{4}\.\d{1,2}\.\d{1,2}(\.\d+)?$")
+# The tap started at this release, which predates the office's Homebrew
+# support. While the formula is still on it, a newer release without that
+# support is skipped, so the bump stays green instead of failing every hour.
+# Once the formula moves past this tag the rule never runs again.
+BOOTSTRAP_TAG = "v2026.10.17.2"
 
 
 def fetch(url, api=False):
@@ -56,6 +61,12 @@ def main():
     current = re.search(r'/refs/tags/(v[0-9.]+)\.tar\.gz"', formula).group(1)
     if numeric(tag) <= numeric(current):
         return
+
+    if current == BOOTSTRAP_TAG:
+        checker = fetch(f"https://raw.githubusercontent.com/{REPO}/{tag}/server/update-checker.ts")
+        if b"/Cellar/isomux/" not in checker:
+            print(f"bump: {tag} predates Homebrew support; skipped", file=sys.stderr)
+            return
 
     tarball = f"https://github.com/{REPO}/archive/refs/tags/{tag}.tar.gz"
     commit = api(f"commits/{tag}")["sha"]

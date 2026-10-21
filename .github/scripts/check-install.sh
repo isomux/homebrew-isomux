@@ -43,6 +43,11 @@ if [ "$status" != "200" ]; then
   echo "The office did not answer HTTP 200 (last status $status)."
   exit 1
 fi
+mode=$(stat -f %Lp "$log")
+if [ "$mode" != "600" ]; then
+  echo "The office log has mode $mode, not 600; it holds the setup key."
+  exit 1
+fi
 if grep -q "could not read PATH from the login shell" "$log"; then
   echo "The launcher fell back to the service PATH."
   exit 1

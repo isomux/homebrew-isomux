@@ -6,6 +6,8 @@ name: Bump to the latest release
 # only when both pass. A failed run leaves the formula on the last good
 # release; it shows as a failed run in this repo's Actions tab. A commit made
 # with GITHUB_TOKEN starts no workflow, so the bump cannot trigger itself.
+# Every job works on the commit the run started from: if main moved since,
+# the push is refused and the run fails.
 on:
   schedule:
     - cron: "17 * * * *"
@@ -59,6 +61,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          ref: ${{ github.sha }}
       - uses: actions/download-artifact@v4
         with:
           name: formula
@@ -77,6 +80,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          ref: ${{ github.sha }}
       - uses: actions/download-artifact@v4
         with:
           name: formula

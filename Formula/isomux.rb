@@ -49,6 +49,10 @@ class Isomux < Formula
   def launcher
     <<~SH
       #!/bin/bash
+      # The office prints its setup key to the log, which launchd has already
+      # opened in a directory other accounts can read.
+      umask 077
+      chmod 600 "#{var}/log/isomux.log" 2>/dev/null
       app="#{libexec}/isomux"
       fallback="#{HOMEBREW_PREFIX}/bin:#{HOMEBREW_PREFIX}/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
       shell="${SHELL:-/bin/zsh}"
