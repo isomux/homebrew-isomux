@@ -50,7 +50,7 @@ class Isomux < Formula
     <<~SH
       #!/bin/bash
       app="#{libexec}/isomux"
-      fallback="#{std_service_path_env}"
+      fallback="#{HOMEBREW_PREFIX}/bin:#{HOMEBREW_PREFIX}/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
       shell="${SHELL:-/bin/zsh}"
       out="$(mktemp -t isomux-path)" || out=""
       login_path=""
