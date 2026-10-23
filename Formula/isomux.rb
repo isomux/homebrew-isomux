@@ -3,24 +3,24 @@
 class Isomux < Formula
   desc "Office for AI coding agents: Claude Code, Codex and OpenCode"
   homepage "https://isomux.com"
-  url "https://github.com/nmamano/isomux/archive/refs/tags/v2026.10.17.2.tar.gz"
-  sha256 "c590c0d0c350a03ee3fbdda409b87f170a7d5ec632bd5d037a467daa2ad8ff91"
+  url "https://github.com/nmamano/isomux/archive/refs/tags/v2026.10.23.tar.gz"
+  sha256 "c5a9fcaf95385d656e6c38b20cd6b1abc1155302e05bf3663f6e5e4bd5a707c9"
   license "BUSL-1.1"
 
   # The release tag's commit. The office reports it with the version.
-  COMMIT = "4dee31c01174bdff7bfc73bd3abf38c635afd996".freeze
+  COMMIT = "5fdb7c893b7b227878b9379bcaf22b7cde4aadc9".freeze
 
   depends_on :macos
 
   # The bun version the release pins in package.json (packageManager).
   resource "bun" do
     on_arm do
-      url "https://github.com/oven-sh/bun/releases/download/bun-v1.4.2/bun-darwin-aarch64.zip"
-      sha256 "90987a3a16d7db556d886ac3d551e7b6d3edf0a1cf43acaed622e8676be1d12f"
+      url "https://github.com/oven-sh/bun/releases/download/bun-v1.4.4/bun-darwin-aarch64.zip"
+      sha256 "c240d7f0ccb90c263a849fcdb09b7ee62630d921348ed6aafda86b9d577bc510"
     end
     on_intel do
-      url "https://github.com/oven-sh/bun/releases/download/bun-v1.4.2/bun-darwin-x64.zip"
-      sha256 "80520d7e17526308c9185d261679ac6d27798d3803a0e9f7ff9121ab8affb012"
+      url "https://github.com/oven-sh/bun/releases/download/bun-v1.4.4/bun-darwin-x64.zip"
+      sha256 "50a3491f73abc2fe81673171a85762d3bc2cc1680ccecadd983de99adf77977e"
     end
   end
 
