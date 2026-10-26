@@ -3,12 +3,12 @@
 class Isomux < Formula
   desc "Office for AI coding agents: Claude Code, Codex and OpenCode"
   homepage "https://isomux.com"
-  url "https://github.com/nmamano/isomux/archive/refs/tags/v2026.10.26.tar.gz"
-  sha256 "3dd9abd3e2d965f1d09c0bfc8fa93c0dea0cbabdf0f754df4741789e591aa426"
+  url "https://github.com/nmamano/isomux/archive/refs/tags/v2026.10.26.2.tar.gz"
+  sha256 "93e1e4572ba303e9da64da417e86a8af5b20100802bb61f51dbf2ce9acd3e7c7"
   license "BUSL-1.1"
 
   # The release tag's commit. The office reports it with the version.
-  COMMIT = "e3b4cd4b54798cb862ae808ded63e609d213d747".freeze
+  COMMIT = "3e4482f8f65354fcb007dc847e408678cfd9270c".freeze
 
   depends_on :macos
 
